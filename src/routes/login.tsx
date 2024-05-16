@@ -11,6 +11,7 @@ import {
   Wrapper,
 } from "../components/auth-components";
 import { auth } from "../firebase";
+import GithubButton from "../components/github-button";
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
@@ -49,7 +50,7 @@ export default function Login() {
 
   return (
     <Wrapper>
-      <Title>Login to X</Title>
+      <Title>Login to 𝕏</Title>
       <Form onSubmit={onSubmit}>
         <Input
           onChange={onChange}
@@ -74,6 +75,7 @@ export default function Login() {
         Don't have an account?{" "}
         <Link to="/create-account">Create One &rarr;</Link>
       </Switcher>
+      <GithubButton />
     </Wrapper>
   );
 }
