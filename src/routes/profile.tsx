@@ -8,7 +8,7 @@ import {
   where,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import styled from "styled-components";
 import { auth, db, storage } from "../firebase";
 import { ITweet } from "../components/timeline";
@@ -55,6 +55,15 @@ const Tweets = styled.div`
   gap: 10px;
 `;
 
+const EditButton = styled.button`
+  background: none;
+  border: none;
+  width: 30px;
+  height: 30px;
+  margin-left: 10px;
+  cursor: pointer;
+`;
+
 export default function Profile() {
   const user = auth.currentUser;
   const [avatar, setAvatar] = useState(user?.photoURL);
@@ -76,7 +85,7 @@ export default function Profile() {
     }
   };
 
-  const fetchTweets = async () => {
+  const fetchTweets = useCallback(async () => {
     const tweetQuery = query(
       collection(db, "tweets"),
       where("userId", "==", user?.uid),
@@ -97,11 +106,28 @@ export default function Profile() {
       };
     });
     setTweets(tweets);
+  }, [user?.uid]);
+
+  const onNameEdit = async () => {
+    const newName = prompt("Edit your name", user?.displayName ?? "Anonymous");
+    if (!newName || newName === user?.displayName) return;
+    try {
+      if (user) {
+        await updateProfile(user, {
+          displayName: newName,
+        });
+        window.location.reload();
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
+      //
+    }
   };
 
   useEffect(() => {
     fetchTweets();
-  }, []);
+  }, [fetchTweets]);
 
   return (
     <Wrapper>
@@ -124,7 +150,20 @@ export default function Profile() {
         accept="image/*"
         onChange={onAvatarChange}
       />
-      <Name>{user?.displayName ?? "Anonymous"}</Name>
+      <div>
+        <Name>{user?.displayName ?? "Anonymous"}</Name>
+        <EditButton onClick={onNameEdit}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="white"
+          >
+            <g id="_01_align_center" data-name="01 align center">
+              <path d="M22.94,1.06a3.626,3.626,0,0,0-5.124,0L0,18.876V24H5.124L22.94,6.184A3.627,3.627,0,0,0,22.94,1.06ZM4.3,22H2V19.7L15.31,6.4l2.3,2.3ZM21.526,4.77,19.019,7.277l-2.295-2.3L19.23,2.474a1.624,1.624,0,0,1,2.3,2.3Z" />
+            </g>
+          </svg>
+        </EditButton>
+      </div>
       <Tweets>
         {tweets.map((tweet) => (
           <Tweet key={tweet.id} {...tweet} />
