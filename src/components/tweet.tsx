@@ -35,10 +35,10 @@ const Payload = styled.p`
 `;
 
 const DeleteButton = styled.button`
-  background-color: tomato;
+  background: none;
   color: white;
   font-weight: 600;
-  border: 0;
+  border: solid 1px tomato;
   font-size: 12px;
   padding: 5px 10px;
   margin-right: 5px;
@@ -48,10 +48,10 @@ const DeleteButton = styled.button`
 `;
 
 const EditButton = styled(DeleteButton)`
-  background-color: teal;
+  background: none;
   color: white;
   font-weight: 600;
-  border: 0;
+  border: solid 1px teal;
   font-size: 12px;
   padding: 5px 10px;
   text-transform: uppercase;
